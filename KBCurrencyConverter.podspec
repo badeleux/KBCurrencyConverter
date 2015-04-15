@@ -9,19 +9,16 @@
 
 Pod::Spec.new do |s|
   s.name             = "KBCurrencyConverter"
-  s.version          = "0.1.0"
-  s.summary          = "A short description of KBCurrencyConverter."
+  s.version          = "0.0.1"
+  s.summary          = "Currency converter for iOS using jsonrates.com"
   s.description      = <<-DESC
-                       An optional longer description of KBCurrencyConverter
-
-                       * Markdown format.
-                       * Don't worry about the indent, we strip it!
+                       Currency converter for iOS using ReactiveCocoa and AFNetworking
                        DESC
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/KBCurrencyConverter"
+  s.homepage         = "https://github.com/badeleux/KBCurrencyConverter"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "badeleux" => "badeleux@gmail.com" }
-  s.source           = { :git => "https://github.com/badeleux/KBCurrencyConverter.git" }
+s.source           = { :git => "https://github.com/badeleux/KBCurrencyConverter.git", :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.platform     = :ios, '7.0'
