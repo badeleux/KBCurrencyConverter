@@ -42,6 +42,8 @@ static KBCurrencyConversion *sharedInstance = nil;
         
         _apiKey = apiKey;
         _sessionManager = [[AFHTTPSessionManager alloc]initWithBaseURL:kBaseURL];
+        _sessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        _sessionManager.responseSerializer.acceptableContentTypes = [[NSSet alloc] initWithObjects:@"text/html", nil];
     }
     return self;
 }
@@ -49,11 +51,25 @@ static KBCurrencyConversion *sharedInstance = nil;
 - (RACSignal*)convert:(NSNumber*)price
          fromCurrency:(NSString*)fromCurrency
            toCurrency:(NSString*)toCurrency {
-    return [_sessionManager rac_GET:@"convert/"
+    return [[[[_sessionManager rac_GET:@"convert/"
                          parameters:@{@"from" : fromCurrency,
                                       @"to" : toCurrency,
                                       @"amount" : price,
-                                      @"apiKey" : self.apiKey}];
+                                      @"apiKey" : self.apiKey}] materialize]map:^id(RACEvent *value) {
+        if (value.eventType == RACEventTypeNext) {
+            NSError *error = nil;
+            NSDictionary *result = [NSJSONSerialization JSONObjectWithData:value.value
+                                                                   options:NSJSONReadingAllowFragments
+                                                                     error:&error];
+            if (error) {
+                return [RACEvent eventWithError:error];
+            }
+            else {
+                return [RACEvent eventWithValue:result];
+            }
+        }
+        return value;
+    }] dematerialize];
 }
 
 @end

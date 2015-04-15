@@ -8,7 +8,7 @@
 
 
 #import "CCViewController.h"
-#import <KB>
+#import <KBCurrencyConversion.h>
 
 @interface CCViewController ()
 
@@ -19,7 +19,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    [[[KBCurrencyConversion sharedInstanceWithAPIKey:@"jr-b9c639b52a8e9492f59b05b3ea2966fb"] convert:@(10)
+                                                                                       fromCurrency:@"PLN"
+                                                                                         toCurrency:@"USD"] subscribeNext:^(id x) {
+        
+    } error:^(NSError *error) {
+        
+    }];
 }
 
 - (void)didReceiveMemoryWarning
