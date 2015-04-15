@@ -9,8 +9,7 @@
     "badeleux": "badeleux@gmail.com"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/KBCurrencyConverter.git",
-    "tag": "0.1.0"
+    "git": "https://github.com/badeleux/KBCurrencyConverter.git"
   },
   "platforms": {
     "ios": "7.0"
