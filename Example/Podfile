@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'KBCurrencyConverter', :exclusive => true do
+  pod "KBCurrencyConverter", :path => "../"
+end
+
+target 'Tests', :exclusive => true do
+  pod "KBCurrencyConverter", :path => "../"
+
+  pod 'Specta'
+  pod 'Expecta'
+end
