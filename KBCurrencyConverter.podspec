@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "KBCurrencyConverter"
-  s.version          = "0.0.1"
+  s.version          = "0.0.2"
   s.summary          = "Currency converter for iOS using jsonrates.com"
   s.description      = <<-DESC
                        Currency converter for iOS using ReactiveCocoa and AFNetworking
