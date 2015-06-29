@@ -11,7 +11,6 @@
 
 @interface KBCurrencyConversion : NSObject
 
-+ (instancetype)sharedInstanceWithAPIKey:(NSString*)apiKey;
 + (instancetype)sharedInstance;
 
 - (RACSignal*)convert:(NSNumber*)price

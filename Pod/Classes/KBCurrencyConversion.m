@@ -10,11 +10,11 @@
 #import <AFNetworking.h>
 #import <AFNetworking-RACExtensions/AFHTTPSessionManager+RACSupport.h>
 
-#define kBaseURL [NSURL URLWithString:@"http://jsonrates.com/"]
+#define kEnv @"store://datatables.org/alltableswithkeys"
+#define kBaseURL [NSURL URLWithString:@"http://query.yahooapis.com/v1/public/"]
 
 @interface KBCurrencyConversion ()
 
-@property NSString *apiKey;
 @property AFHTTPSessionManager *sessionManager;
 
 @end
@@ -23,27 +23,20 @@
 
 static KBCurrencyConversion *sharedInstance = nil;
 
-+ (instancetype)sharedInstanceWithAPIKey:(NSString*)apiKey {
++ (instancetype)sharedInstance {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedInstance = [[[self class]alloc]initWithAPIKey:apiKey];
+        sharedInstance = [[[self class]alloc]init];
     });
     return sharedInstance;
 }
 
-+ (instancetype)sharedInstance {
-    return sharedInstance;
-}
-
-- (instancetype)initWithAPIKey:(NSString*)apiKey
+- (instancetype)init
 {
     self = [super init];
     if (self) {
-        
-        _apiKey = apiKey;
         _sessionManager = [[AFHTTPSessionManager alloc]initWithBaseURL:kBaseURL];
-        _sessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
-        _sessionManager.responseSerializer.acceptableContentTypes = [[NSSet alloc] initWithObjects:@"text/html", nil];
+        _sessionManager.responseSerializer = [AFJSONResponseSerializer serializer];
     }
     return self;
 }
@@ -51,25 +44,15 @@ static KBCurrencyConversion *sharedInstance = nil;
 - (RACSignal*)convert:(NSNumber*)price
          fromCurrency:(NSString*)fromCurrency
            toCurrency:(NSString*)toCurrency {
-    return [[[[_sessionManager rac_GET:@"convert/"
-                         parameters:@{@"from" : fromCurrency,
-                                      @"to" : toCurrency,
-                                      @"amount" : price,
-                                      @"apiKey" : self.apiKey}] materialize]map:^id(RACEvent *value) {
-        if (value.eventType == RACEventTypeNext) {
-            NSError *error = nil;
-            NSDictionary *result = [NSJSONSerialization JSONObjectWithData:value.value
-                                                                   options:NSJSONReadingAllowFragments
-                                                                     error:&error];
-            if (error) {
-                return [RACEvent eventWithError:error];
-            }
-            else {
-                return [RACEvent eventWithValue:result];
-            }
-        }
-        return value;
-    }] dematerialize];
+    NSString *q = [NSString stringWithFormat:@"select * from yahoo.finance.xchange where pair in (\"%@%@\")", fromCurrency, toCurrency];
+    return [[_sessionManager rac_GET:@"yql"
+                         parameters:@{@"q" : q,
+                                      @"format" : @"json",
+                                      @"env" : kEnv}]map:^id(NSDictionary *response) {
+        NSDictionary *results = response[@"query"][@"results"];
+        NSNumber *rate = @([results[@"rate"][@"Rate"] doubleValue]);
+        return @([price doubleValue] * [rate doubleValue]);
+    }];
 }
 
 @end

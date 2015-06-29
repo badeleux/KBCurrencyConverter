@@ -19,7 +19,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [[[KBCurrencyConversion sharedInstanceWithAPIKey:@"jr-b9c639b52a8e9492f59b05b3ea2966fb"] convert:@(10)
+    [[[KBCurrencyConversion sharedInstance] convert:@(10)
                                                                                        fromCurrency:@"PLN"
                                                                                          toCurrency:@"USD"] subscribeNext:^(id x) {
         
