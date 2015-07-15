@@ -48,7 +48,8 @@ static KBCurrencyConversion *sharedInstance = nil;
     return [[_sessionManager rac_GET:@"yql"
                          parameters:@{@"q" : q,
                                       @"format" : @"json",
-                                      @"env" : kEnv}]map:^id(NSDictionary *response) {
+                                      @"env" : kEnv}]map:^id(RACTuple *tuple) {
+        NSDictionary *response = [tuple first];
         NSDictionary *results = response[@"query"][@"results"];
         NSNumber *rate = @([results[@"rate"][@"Rate"] doubleValue]);
         return @([price doubleValue] * [rate doubleValue]);
